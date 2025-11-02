@@ -37,6 +37,33 @@ A Retrieval-Augmented Generation (RAG) chatbot that integrates with Google Docs 
 └── README.md                   # This file
 ```
 
+## Quick Start
+
+### Local Development
+
+**Option 1: Using credentials.json (Easiest)**
+1. Place `credentials.json` in project root
+2. Create `.env` file with `OPENAI_API_KEY`
+3. Run `streamlit run app.py`
+
+**Option 2: Using Environment Variables (Same as Cloud)**
+1. Run `python setup_credentials.py` to get JSON string
+2. Create `.env` file with both `OPENAI_API_KEY` and `GOOGLE_CREDENTIALS_JSON`
+3. Run `streamlit run app.py`
+
+**Verify Setup:**
+```bash
+python setup_credentials.py verify
+```
+
+### Cloud Deployment
+
+Set these environment variables on your platform:
+- `OPENAI_API_KEY`
+- `GOOGLE_CREDENTIALS_JSON` (entire credentials.json content as JSON string)
+
+See `DEPLOYMENT_GUIDE.md` for detailed instructions.
+
 ## Setup Instructions
 
 ### 1. Prerequisites

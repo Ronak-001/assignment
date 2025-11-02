@@ -20,14 +20,22 @@ class AuthManager:
         self._ensure_credentials_file()
     
     def _ensure_credentials_file(self):
-        """Create credentials.json from environment variable if it doesn't exist"""
-        if not os.path.exists(CREDENTIALS_FILE) and GOOGLE_CREDENTIALS_JSON:
+        """
+        Create credentials.json from environment variable if it doesn't exist.
+        This allows the same code to work both locally (with file) and in cloud (with env var).
+        """
+        # If file already exists, use it (local development)
+        if os.path.exists(CREDENTIALS_FILE):
+            return
+        
+        # If file doesn't exist but env var is set, create file from env var (cloud deployment)
+        if GOOGLE_CREDENTIALS_JSON:
             try:
                 # Parse the JSON string from environment variable
                 credentials_data = json.loads(GOOGLE_CREDENTIALS_JSON)
-                # Write to file
+                # Write to file (will be created at runtime)
                 with open(CREDENTIALS_FILE, 'w') as f:
-                    json.dump(credentials_data, f)
+                    json.dump(credentials_data, f, indent=2)
             except json.JSONDecodeError as e:
                 raise ValueError(
                     f"Invalid GOOGLE_CREDENTIALS_JSON format. "
