@@ -56,13 +56,17 @@ A Retrieval-Augmented Generation (RAG) chatbot that integrates with Google Docs 
 python setup_credentials.py verify
 ```
 
-### Cloud Deployment
+### Cloud Deployment (Streamlit Cloud)
 
-Set these environment variables on your platform:
-- `OPENAI_API_KEY`
-- `GOOGLE_CREDENTIALS_JSON` (entire credentials.json content as JSON string)
+**Recommended Platform:** Streamlit Cloud
 
-See `DEPLOYMENT_GUIDE.md` for detailed instructions.
+1. Push code to GitHub
+2. Go to https://streamlit.io/cloud
+3. Connect your repository
+4. Set environment variables in Settings → Secrets
+5. Deploy!
+
+**See `STREAMLIT_CLOUD_DEPLOY.md` for complete guide.**
 
 ## Setup Instructions
 

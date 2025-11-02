@@ -88,22 +88,9 @@ This will check:
 4. **Update Google OAuth Redirect URIs:**
    - Add your Streamlit Cloud URL: `https://your-app.streamlit.app`
 
-### Platform: Vercel
+### Platform: Streamlit Cloud (Recommended)
 
-1. **Add Environment Variables:**
-   - Go to Vercel Dashboard → Project → Settings → Environment Variables
-   - Add:
-
-   ```
-   OPENAI_API_KEY = sk-your-openai-api-key-here
-   GOOGLE_CREDENTIALS_JSON = {"installed":{"client_id":"...","project_id":"..."}}
-   ```
-
-   **Note:** Paste the entire JSON as a single line or formatted JSON (both work)
-
-2. **Deploy:**
-   - Push to GitHub (auto-deploys)
-   - Or use Vercel CLI: `vercel`
+See **`STREAMLIT_CLOUD_DEPLOY.md`** for complete step-by-step guide.
 
 ### Platform: Railway
 
