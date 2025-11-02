@@ -33,4 +33,5 @@ Thumbs.db
 # Streamlit
 .streamlit/
 
-
+fix_secrets.bat
+streamlit_secrets_example.toml

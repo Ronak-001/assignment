@@ -64,6 +64,9 @@ def main():
         st.header("🔐 Authentication")
         st.write("Sign in with your Google account to access your documents.")
         
+        # Handle authorization code entry (for cloud environments)
+        auth_code = st.text_input("Authorization Code (if needed)", key="auth_code", type="password")
+        
         if st.button("Sign in with Google", type="primary"):
             with st.spinner("Authenticating with Google..."):
                 try:
@@ -74,8 +77,63 @@ def main():
                     st.session_state.docs_manager = GoogleDocsManager(credentials)
                     st.success("✅ Successfully authenticated!")
                     st.rerun()
+                except RuntimeError as e:
+                    # Handle browser not available error - show authorization URL
+                    error_msg = str(e)
+                    if "authorize" in error_msg.lower():
+                        st.markdown(error_msg)
+                        st.info("💡 **Tip:** After authorizing, copy the code from the URL (the part after `code=`) and paste it above, then click 'Verify Code'.")
+                    else:
+                        st.error(f"Authentication error: {error_msg}")
                 except Exception as e:
-                    st.error(f"Authentication failed: {str(e)}")
+                    error_msg = str(e)
+                    if "browser" in error_msg.lower() or "runnable" in error_msg.lower():
+                        # Browser not available - provide manual flow
+                        try:
+                            from google_auth_oauthlib.flow import InstalledAppFlow
+                            from config import SCOPES, CREDENTIALS_FILE
+                            
+                            if auth_code:
+                                # User provided authorization code - store flow in session state
+                                if 'oauth_flow' not in st.session_state:
+                                    st.session_state.oauth_flow = InstalledAppFlow.from_client_secrets_file(
+                                        CREDENTIALS_FILE, SCOPES)
+                                
+                                # Exchange code for token
+                                st.session_state.oauth_flow.fetch_token(code=auth_code)
+                                credentials = st.session_state.oauth_flow.credentials
+                                
+                                st.session_state.credentials = credentials
+                                st.session_state.authenticated = True
+                                st.session_state.docs_manager = GoogleDocsManager(credentials)
+                                
+                                # Clean up
+                                if 'oauth_flow' in st.session_state:
+                                    del st.session_state.oauth_flow
+                                
+                                st.success("✅ Successfully authenticated!")
+                                st.rerun()
+                            else:
+                                # Generate authorization URL - store flow in session state
+                                if 'oauth_flow' not in st.session_state:
+                                    st.session_state.oauth_flow = InstalledAppFlow.from_client_secrets_file(
+                                        CREDENTIALS_FILE, SCOPES)
+                                
+                                auth_url, _ = st.session_state.oauth_flow.authorization_url(prompt='consent')
+                                st.markdown(
+                                    f"### 🌐 **Authorization Required**\n\n"
+                                    f"Since we're in a cloud environment, please authorize manually:\n\n"
+                                    f"**Step 1:** Click this link to authorize: [🔗 Authorize with Google]({auth_url})\n\n"
+                                    f"**Step 2:** After authorizing, you'll be redirected to a page that says 'This site can't be reached' or shows an error.\n\n"
+                                    f"**Step 3:** Look at the URL in your browser - it will contain `code=` followed by a long string.\n\n"
+                                    f"**Step 4:** Copy everything after `code=` (until `&` or end of URL) and paste it in the 'Authorization Code' field above.\n\n"
+                                    f"**Step 5:** Click 'Sign in with Google' again to complete authentication."
+                                )
+                                st.info("💡 **Example:** If URL is `http://localhost/?code=4/0A...xyz`, copy `4/0A...xyz`")
+                        except Exception as inner_e:
+                            st.error(f"Authentication setup failed: {str(inner_e)}")
+                    else:
+                        st.error(f"Authentication failed: {error_msg}")
     else:
         # Main Application
         st.success("✅ Authenticated with Google")
