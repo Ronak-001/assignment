@@ -1,5 +1,29 @@
 # Vercel Deployment Guide
 
+## ⚠️ IMPORTANT: Vercel is NOT Recommended for Streamlit Apps
+
+**Vercel is designed for serverless functions and static sites, not for Streamlit applications.**
+
+Streamlit requires a long-running process with WebSocket support, which doesn't work well with Vercel's serverless architecture.
+
+### ✅ Recommended Alternatives:
+
+1. **Streamlit Cloud** (BEST for Streamlit apps)
+   - Free tier
+   - Native Streamlit support
+   - Zero configuration
+   - See: `STREAMLIT_CLOUD_DEPLOY.md`
+
+2. **Railway** - Good Python support, easy setup
+3. **Render** - Free tier, good for Streamlit
+4. **Heroku** - Established platform for Python apps
+
+---
+
+## If You Must Use Vercel
+
+**Note:** This requires significant modifications and may not work reliably. Consider Streamlit Cloud instead.
+
 ## Prerequisites
 
 1. **Vercel Account**: Sign up at https://vercel.com
