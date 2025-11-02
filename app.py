@@ -8,7 +8,7 @@ import os
 from auth_manager import AuthManager
 from google_docs_manager import GoogleDocsManager
 from rag_system import RAGSystem
-from config import CREDENTIALS_FILE
+from config import CREDENTIALS_FILE, GOOGLE_CREDENTIALS_JSON
 
 
 def initialize_session_state():
@@ -44,8 +44,8 @@ def main():
     st.title("🤖 RAG-Powered Chatbot with Google Docs Integration")
     st.markdown("---")
     
-    # Check for credentials file
-    if not os.path.exists(CREDENTIALS_FILE):
+    # Check for credentials file or environment variable
+    if not os.path.exists(CREDENTIALS_FILE) and not GOOGLE_CREDENTIALS_JSON:
         st.error(
             f"⚠️ **Credentials file not found!**\n\n"
             f"Please download OAuth 2.0 credentials from Google Cloud Console and save as '{CREDENTIALS_FILE}'.\n\n"
@@ -54,7 +54,8 @@ def main():
             "2. Create/select a project\n"
             "3. Enable Google Docs API and Google Drive API\n"
             "4. Create OAuth 2.0 credentials (Desktop app)\n"
-            "5. Download and save as 'credentials.json'"
+            "5. Download and save as 'credentials.json'\n\n"
+            "**For deployment:** Set GOOGLE_CREDENTIALS_JSON environment variable with the JSON content."
         )
         return
     

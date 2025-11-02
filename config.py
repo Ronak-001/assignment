@@ -26,4 +26,7 @@ SCOPES = ['https://www.googleapis.com/auth/documents.readonly',
 CREDENTIALS_FILE = 'credentials.json'
 TOKEN_FILE = 'token.json'
 
+# For Vercel deployment: credentials can be provided as JSON string in environment variable
+GOOGLE_CREDENTIALS_JSON = os.getenv("GOOGLE_CREDENTIALS_JSON")
+
 
