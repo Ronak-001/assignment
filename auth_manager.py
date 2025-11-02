@@ -75,25 +75,28 @@ class AuthManager:
                 flow = InstalledAppFlow.from_client_secrets_file(
                     CREDENTIALS_FILE, SCOPES)
                 
-                # Try to detect if we're in a cloud environment (no browser available)
-                # Use run_console for cloud, run_local_server for local
-                try:
-                    # Try to open browser first (works locally)
-                    self.creds = flow.run_local_server(port=0, open_browser=True)
-                except Exception as e:
-                    # If browser doesn't work (cloud environment), use console flow
-                    if "browser" in str(e).lower() or "runnable" in str(e).lower():
-                        # Generate authorization URL for manual entry
-                        auth_url, _ = flow.authorization_url(prompt='consent')
-                        raise RuntimeError(
-                            f"🔐 **Browser authentication not available in cloud environment.**\n\n"
-                            f"Please follow these steps:\n\n"
-                            f"1. **Click this link to authorize:** {auth_url}\n\n"
-                            f"2. **Copy the authorization code** from the page\n\n"
-                            f"3. **Enter the code below** and click 'Verify Code'"
-                        )
-                    else:
-                        raise
+                # Detect cloud environment - no browser available
+                # Check for common cloud environment indicators
+                is_cloud = (
+                    os.getenv('STREAMLIT_SERVER_PORT') is not None or
+                    os.getenv('STREAMLIT_SHARING_MODE') is not None or
+                    'streamlit.app' in os.getenv('SERVER_NAME', '') or
+                    not os.getenv('DISPLAY')  # No display available
+                )
+                
+                if is_cloud:
+                    # Cloud environment - return flow for manual authorization
+                    raise RuntimeError("CLOUD_ENV_DETECTED")
+                else:
+                    # Local environment - try browser
+                    try:
+                        self.creds = flow.run_local_server(port=0, open_browser=True)
+                    except Exception as e:
+                        # Browser failed - fall back to manual flow
+                        if "browser" in str(e).lower() or "runnable" in str(e).lower():
+                            raise RuntimeError("CLOUD_ENV_DETECTED")
+                        else:
+                            raise
             
             # Save credentials for future use
             with open(TOKEN_FILE, 'wb') as token:
